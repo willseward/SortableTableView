@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -222,6 +221,7 @@ public class TableView<T> extends LinearLayout {
         tableDataAdapter = dataAdapter;
         tableDataAdapter.setColumnModel(columnModel);
         tableDataAdapter.setRowColoriser(dataRowColoriser);
+        tableDataAdapter.setTableView(this);
         tableDataView.setAdapter(tableDataAdapter);
         forceRefresh();
     }
@@ -312,39 +312,48 @@ public class TableView<T> extends LinearLayout {
         tableDataAdapter.setRowColoriser(dataRowColoriser);
 
         tableDataView = new ListView(getContext());
-        tableDataView.setOnItemClickListener(new InternalDataClickListener());
         tableDataView.setLayoutParams(dataViewLayoutParams);
         tableDataView.setAdapter(tableDataAdapter);
 
         addView(tableDataView);
     }
 
+    public InternalDataClickListener createDataClickListener(final int rowIndex, final int columnIndex) {
+        return new InternalDataClickListener(rowIndex, columnIndex);
+    }
 
     /**
      * Internal management of clicks on the data view.
      *
      * @author ISchwarz
      */
-    private class InternalDataClickListener implements AdapterView.OnItemClickListener {
+    private class InternalDataClickListener implements OnClickListener {
 
-        @Override
-        public void onItemClick(final AdapterView<?> adapterView, final View view, final int i, final long l) {
-            informAllListeners(i);
+        private int rowIndex;
+        private int columnIndex;
+
+        public InternalDataClickListener(final int row, final int column) {
+            rowIndex = row;
+            columnIndex = column;
         }
 
-        private void informAllListeners(final int rowIndex) {
+        @Override
+        public void onClick(View v) {
+            informAllListeners(rowIndex, columnIndex);
+        }
+
+        private void informAllListeners(final int rowIndex, final int columnIndex) {
             final T clickedObject = tableDataAdapter.getItem(rowIndex);
 
             for (final TableDataClickListener<T> listener : dataClickListeners) {
                 try {
-                    listener.onDataClicked(rowIndex, clickedObject);
+                    listener.onDataClicked(rowIndex, columnIndex, clickedObject);
                 } catch (final Throwable t) {
                     Log.w(LOG_TAG, "Caught Throwable on listener notification: " + t.toString());
                     // continue calling listeners
                 }
             }
         }
-
     }
 
     /**
@@ -438,5 +447,4 @@ public class TableView<T> extends LinearLayout {
             return 50;
         }
     }
-
 }

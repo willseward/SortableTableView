@@ -12,9 +12,11 @@ public interface TableDataClickListener<T> {
      *
      * @param rowIndex
      *         The index of the row that has been clicked.
+     * @param columnIndex
+     *         The index of the column that has been clicked.
      * @param clickedData
      *         The data that was clicked.
      */
-    void onDataClicked(final int rowIndex, final T clickedData);
+    void onDataClicked(final int rowIndex, final int columnIndex, final T clickedData);
 
 }

@@ -1,7 +1,5 @@
 package de.codecrafters.tableview;
 
-import static android.widget.LinearLayout.LayoutParams;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
@@ -14,11 +12,14 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import de.codecrafters.tableview.colorizers.TableDataRowColorizer;
+
+import static android.widget.LinearLayout.LayoutParams;
 
 
 /**
@@ -33,6 +34,7 @@ public abstract class TableDataAdapter<T> extends ArrayAdapter<T> {
     private TableColumnModel columnModel;
     private final List<T> data;
     private TableDataRowColorizer<? super T> rowColoriser;
+    private WeakReference<TableView> tableView;
 
 
     /**
@@ -169,6 +171,11 @@ public abstract class TableDataAdapter<T> extends ArrayAdapter<T> {
                 cellView = new TextView(getContext());
             }
 
+            if (tableView.get() != null) {
+                TableView tView = tableView.get();
+                cellView.setOnClickListener(tView.createDataClickListener(rowIndex, columnIndex));
+            }
+
             final int width = widthUnit * columnModel.getColumnWeight(columnIndex);
 
             final LinearLayout.LayoutParams cellLayoutParams = new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -236,6 +243,16 @@ public abstract class TableDataAdapter<T> extends ArrayAdapter<T> {
      */
     protected void setColumnWeight(final int columnIndex, final int columnWeight) {
         columnModel.setColumnWeight(columnIndex, columnWeight);
+    }
+
+    /**
+     * Sets the TableView reference for the adapter
+     *
+     * @param tableView
+     *         The tableView
+     */
+    protected void setTableView(final TableView tableView) {
+        this.tableView = new WeakReference<>(tableView);
     }
 
     /**

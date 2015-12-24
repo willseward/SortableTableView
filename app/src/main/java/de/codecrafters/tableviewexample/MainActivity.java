@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private class CarClickListener implements TableDataClickListener<Car> {
 
         @Override
-        public void onDataClicked(int rowIndex, Car clickedData) {
+        public void onDataClicked(int rowIndex, int columnIndex, Car clickedData) {
             String carString = clickedData.getProducer().getName() + " " + clickedData.getName();
             Toast.makeText(MainActivity.this, carString, Toast.LENGTH_SHORT).show();
         }
