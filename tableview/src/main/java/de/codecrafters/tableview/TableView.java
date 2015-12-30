@@ -211,6 +211,10 @@ public class TableView<T> extends LinearLayout {
         forceRefresh();
     }
 
+    public TableHeaderAdapter getTableHeaderAdapter() {
+        return tableHeaderAdapter;
+    }
+
     /**
      * Sets the {@link TableDataAdapter} that is used to render the data view for each cell.
      *
@@ -224,6 +228,10 @@ public class TableView<T> extends LinearLayout {
         tableDataAdapter.setTableView(this);
         tableDataView.setAdapter(tableDataAdapter);
         forceRefresh();
+    }
+
+    public TableDataAdapter<T> getTableDataAdapter() {
+        return tableDataAdapter;
     }
 
     /**
