@@ -270,7 +270,7 @@ public class TableView<T> extends LinearLayout {
         return columnModel.getColumnWeight(columnIndex);
     }
 
-    private void forceRefresh() {
+    public void forceRefresh() {
         if(tableHeaderView != null) {
             tableHeaderView.invalidate();
         }
